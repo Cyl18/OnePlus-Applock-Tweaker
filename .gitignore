@@ -10,3 +10,4 @@
 *.apk
 app/debug/output.json
 app/release/output.json
+.idea/*
