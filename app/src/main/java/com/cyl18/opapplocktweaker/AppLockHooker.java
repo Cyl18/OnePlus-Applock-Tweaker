@@ -37,6 +37,13 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             }
         });
 
+        XposedHelpers.findAndHookMethod("com.oneplus.applocker.ApplockerConfirmActivity", lpparam.classLoader, "onResume", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                hookOnCreate(param);
+            }
+        });
+
         XposedHelpers.findAndHookMethod("com.oneplus.applocker.ApplockerConfirmActivity", lpparam.classLoader, "onDestroy", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
