@@ -17,7 +17,6 @@ import de.robv.android.xposed.XposedHelpers;
  */
 
 public class FaceUnlockServiceConnector {
-    public static final int USERID = 233;
     private IOPFacelockService facelockService;
     private IOPFacelockCallback facelockCallback;
     private static FaceUnlockServiceConnector instance;
@@ -41,7 +40,7 @@ public class FaceUnlockServiceConnector {
         try {
             facelockService.prepare();
             facelockService.registerCallback(this.facelockCallback);
-            facelockService.startFaceUnlock(USERID);
+            facelockService.startFaceUnlock(0);
         } catch (RemoteException e) {
             XposedBridge.log(e);
         }
@@ -55,7 +54,7 @@ public class FaceUnlockServiceConnector {
     public void stopFaceUnlock() {
         if (!started) return;
         try {
-            facelockService.stopFaceUnlock(USERID);
+            facelockService.stopFaceUnlock(0);
             facelockService.unregisterCallback(this.facelockCallback);
             facelockService.release();
             started = false;
