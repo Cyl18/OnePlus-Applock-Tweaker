@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.view.View;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -15,6 +16,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class AppLockHooker implements IXposedHookLoadPackage {
+    private static final int ONEPLUS_APPLOCK_LAYOUT_ID = 2131558403;
     private static ServiceConnection connection = new MyServiceConnection();
     private static Activity currentApplockerActivity;
     private static TrackerConnector currentTracker;
@@ -56,12 +58,12 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         intent.setClassName("com.oneplus.faceunlock", "com.oneplus.faceunlock.FaceUnlockService");
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         currentTracker = new TrackerConnector(XposedHelpers.getObjectField(currentApplockerActivity, "mCredentialCheckResultTracker"));
-        //currentApplockerActivity.findViewById((int)2131558403).setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        FaceUnlockServiceConnector.getInstance().startFaceUnlock();
-        //    }
-        //});
+        currentApplockerActivity.findViewById(ONEPLUS_APPLOCK_LAYOUT_ID).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FaceUnlockServiceConnector.getInstance().startFaceUnlock();
+            }
+        });
     }
 }
 
