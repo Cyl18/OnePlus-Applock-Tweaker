@@ -56,6 +56,12 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         intent.setClassName("com.oneplus.faceunlock", "com.oneplus.faceunlock.FaceUnlockService");
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         currentTracker = new TrackerConnector(XposedHelpers.getObjectField(currentApplockerActivity, "mCredentialCheckResultTracker"));
+        //currentApplockerActivity.findViewById((int)2131558403).setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View view) {
+        //        FaceUnlockServiceConnector.getInstance().startFaceUnlock();
+        //    }
+        //});
     }
 }
 
