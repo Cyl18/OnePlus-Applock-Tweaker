@@ -15,9 +15,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class AppLockHooker implements IXposedHookLoadPackage {
-
-    private static final String APPLOCK_PACKAGE = "com.oneplus.applocker";
-
     private static ServiceConnection connection = new MyServiceConnection();
     private static Activity currentApplockerActivity;
     private static TrackerConnector currentTracker;
@@ -32,22 +29,21 @@ public class AppLockHooker implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        if (!lpparam.packageName.equals(APPLOCK_PACKAGE)) return;
+        if (!lpparam.packageName.equals(Constants.APPLOCK_PACKAGE_NAME)) return;
 
-        XposedHelpers.findAndHookMethod("com.oneplus.applocker.ApplockerConfirmActivity", lpparam.classLoader, "onResume", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(Constants.ACTIVITY_CONFIRM_NAME, lpparam.classLoader, "onResume", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 hookOnStart(param);
             }
         });
 
-        XposedHelpers.findAndHookMethod("com.oneplus.applocker.ApplockerConfirmActivity", lpparam.classLoader, "onPause", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(Constants.ACTIVITY_CONFIRM_NAME, lpparam.classLoader, "onPause", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 hookOnStop();
             }
         });
-
     }
 
     private void hookOnStop() {
@@ -61,7 +57,5 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         currentTracker = new TrackerConnector(XposedHelpers.getObjectField(currentApplockerActivity, "mCredentialCheckResultTracker"));
     }
-
-
 }
 

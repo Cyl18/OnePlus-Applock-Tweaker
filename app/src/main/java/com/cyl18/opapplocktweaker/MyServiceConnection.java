@@ -5,7 +5,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 public class MyServiceConnection implements ServiceConnection {
-    public static FaceUnlockServiceConnector faceUnlockServiceConnector = new FaceUnlockServiceConnector();
+    private static FaceUnlockServiceConnector faceUnlockServiceConnector = new FaceUnlockServiceConnector();
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
