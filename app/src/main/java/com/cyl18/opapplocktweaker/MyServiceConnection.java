@@ -9,11 +9,11 @@ public class MyServiceConnection implements ServiceConnection {
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        faceUnlockServiceConnector.onFaceUnlockServiceConnected(iBinder);
+        faceUnlockServiceConnector.startFaceUnlock(iBinder);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        faceUnlockServiceConnector.onFaceUnlockServiceDisconnected();
+        faceUnlockServiceConnector.stopFaceUnlock();
     }
 }
