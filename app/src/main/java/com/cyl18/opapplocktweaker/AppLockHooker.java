@@ -40,24 +40,17 @@ public class AppLockHooker implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!lpparam.packageName.equals(Constants.APPLOCK_PACKAGE)) return;
 
-
+        // hook face recognition
         XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM, lpparam.classLoader, "onResume", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 currentApplockerActivity = (Activity) param.thisObject;
 
                 SharedPreferences preferences = getPreferences();
-
                 boolean enable_face_recognition = preferences.getBoolean("enable_face_recognition", true);
-                boolean enable_fast_password = preferences.getBoolean("enable_fast_password", false);
 
-                if (enable_face_recognition) {
-                    hookOnStart();
-                }
-
-                if (enable_fast_password) {
-                    hookFastPassword(preferences);
-                }
+                if (enable_face_recognition)
+                    hookFaceUnlockStart();
             }
         });
 
@@ -65,20 +58,54 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 SharedPreferences preferences = getPreferences();
-
                 boolean enable_face_recognition = preferences.getBoolean("enable_face_recognition", true);
 
                 if (enable_face_recognition)
-                    hookOnStop();
+                    hookFaceUnlockStop();
             }
         });
 
+        // hook complex password
+        XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM_COMPLEX, lpparam.classLoader, "onResume", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                currentApplockerActivity = (Activity) param.thisObject;
+
+                SharedPreferences preferences = getPreferences();
+                boolean enable_fast_password = preferences.getBoolean("enable_fast_password", false);
+
+                if (enable_fast_password)
+                    hookFastPassword(preferences);
+            }
+        });
+
+        // hook pin
+        XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM_PASSWORD, lpparam.classLoader, "onResume", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                currentApplockerActivity = (Activity) param.thisObject;
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(Constants.VIEW_PIN, lpparam.classLoader, "append", char.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Object thisObject = param.thisObject;
+
+                SharedPreferences preferences = getPreferences();
+                boolean enable_fast_password = preferences.getBoolean("enable_fast_password", false);
+
+                String password_length = preferences.getString("password_length", "0");
+                final Integer length = Integer.parseInt(password_length);
+
+                if (enable_fast_password)
+                    onPINInput(length, thisObject);
+            }
+        });
+
+
     }
 
-    private SharedPreferences getPreferences() {
-        File dest = new File(Environment.getExternalStorageDirectory(), Constants.SHARED_SETTINGS_FILE);
-        return new XSharedPreferences(dest);
-    }
 
     private void hookFastPassword(SharedPreferences preferences) {
         String password_length = preferences.getString("password_length", "0");
@@ -88,7 +115,7 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         passwordEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if (length.equals(passwordEditText.getText().length())) {
+                if (length.equals(passwordEditText.getText().toString().length())) {
                     XposedHelpers.callMethod(currentApplockerActivity, "handleNext");
                     return true;
                 }
@@ -97,11 +124,23 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         });
     }
 
-    private void hookOnStop() {
+    private void onPINInput(Integer length, Object thisObject) {
+
+        if (length.equals(((String) XposedHelpers.callMethod(thisObject, "getText")).length())) {
+            XposedHelpers.callMethod(currentApplockerActivity, "handleNext");
+        }
+    }
+
+    private SharedPreferences getPreferences() {
+        File dest = new File(Environment.getExternalStorageDirectory(), Constants.SHARED_SETTINGS_FILE);
+        return new XSharedPreferences(dest);
+    }
+
+    private void hookFaceUnlockStop() {
         currentApplockerActivity.unbindService(connection);
     }
 
-    private void hookOnStart() {
+    private void hookFaceUnlockStart() {
         Intent intent = new Intent();
         intent.setClassName(Constants.FACEUNLOCK_PACKAGE, Constants.FACEUNLOCK_SERVICE);
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
