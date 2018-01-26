@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">OnePlus Applock Tweaker</string>
+    <string name="title_activity_settings">OnePlus Applock Tweaker Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+    <string name="enable_face_recognition_summary">For fast unlock</string>
+    <string name="enable_face_recognition">Enable face recognition</string>
+    <string name="enable_fast_password_summary">Quick unlock needs to know the exact length of your password</string>
+    <string name="enable_fast_password">Enable quick unlock</string>
+    <string name="password_length">Password length</string>
+    <string name="hide_icon">Hide icon</string>
+
+
 </resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OnePlus 应用锁修改</string>
+    <string name="title_activity_settings">OnePlus 应用锁修改设置</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">设置</string>
+    <string name="enable_face_recognition_summary">为应用锁启用人脸识别</string>
+    <string name="enable_face_recognition">启用人脸识别</string>
+    <string name="enable_fast_password_summary">输完密码后不用按下确定</string>
+    <string name="enable_fast_password">快速输入密码</string>
+    <string name="password_length">密码长度</string>
+    <string name="hide_icon">隐藏图标</string>
+
+</resources>

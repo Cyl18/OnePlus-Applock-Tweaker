@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="enable_face_recognition"
+        android:summary="@string/enable_face_recognition_summary"
+        android:title="@string/enable_face_recognition" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="enable_fast_password"
+        android:summary="@string/enable_fast_password_summary"
+        android:title="@string/enable_fast_password" />
+
+    <EditTextPreference
+        android:dependency="enable_fast_password"
+        android:defaultValue="0"
+        android:inputType="number"
+        android:key="password_length"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/password_length" />
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="enable_hide_icon"
+        android:title="@string/hide_icon" />
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+
+
+</PreferenceScreen>
