@@ -54,14 +54,14 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             }
         });
 
-        XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM, lpparam.classLoader, "onPause", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM, lpparam.classLoader, "onAuthenticated", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 SharedPreferences preferences = getPreferences();
                 boolean enable_face_recognition = preferences.getBoolean("enable_face_recognition", true);
 
                 if (enable_face_recognition)
-                    hookFaceUnlockStop();
+                    hookFaceUnlockStop(true);
             }
         });
 
@@ -103,7 +103,6 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             }
         });
 
-
     }
 
 
@@ -136,7 +135,8 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         return new XSharedPreferences(dest);
     }
 
-    private void hookFaceUnlockStop() {
+    private void hookFaceUnlockStop(boolean force) {
+        FaceUnlockServiceConnector.getInstance().stopFaceUnlock(force);
         currentApplockerActivity.unbindService(connection);
     }
 
@@ -148,7 +148,7 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         getLayout().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FaceUnlockServiceConnector.getInstance().stopFaceUnlock();
+                FaceUnlockServiceConnector.getInstance().stopFaceUnlock(false);
             }
         });
     }

@@ -51,8 +51,9 @@ public class FaceUnlockServiceConnector {
         startFaceUnlock(currentBinder);
     }
 
-    public void stopFaceUnlock() {
-        if (!started) return;
+    public void stopFaceUnlock(boolean force) {
+        if (!force)
+            if (!started) return;
         try {
             facelockService.stopFaceUnlock(Constants.USER_ID);
             facelockService.unregisterCallback(this.facelockCallback);
@@ -62,9 +63,10 @@ public class FaceUnlockServiceConnector {
             XposedBridge.log(e);
         }
 
-        if (!AppLockHooker.getCurrentTracker().getResult() &&
-                isScreenOn())
-            startFaceUnlock();
+        if (!force)
+            if (!AppLockHooker.getCurrentTracker().getResult() &&
+                    isScreenOn())
+                startFaceUnlock();
     }
 
     private boolean isScreenOn() {
@@ -99,7 +101,7 @@ public class FaceUnlockServiceConnector {
         }
 
         public void onEndRecognize(int i, int i1, int i2) throws RemoteException {
-            FaceUnlockServiceConnector.getInstance().stopFaceUnlock();
+            FaceUnlockServiceConnector.getInstance().stopFaceUnlock(false);
         }
     }
 }

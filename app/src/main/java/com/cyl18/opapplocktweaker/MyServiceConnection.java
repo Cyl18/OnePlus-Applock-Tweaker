@@ -14,6 +14,6 @@ public class MyServiceConnection implements ServiceConnection {
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        faceUnlockServiceConnector.stopFaceUnlock();
+        faceUnlockServiceConnector.stopFaceUnlock(true);
     }
 }
