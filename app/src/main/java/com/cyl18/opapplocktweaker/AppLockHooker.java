@@ -149,6 +149,7 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             @Override
             public void onClick(View view) {
                 FaceUnlockServiceConnector.getInstance().stopFaceUnlock(false);
+                FaceUnlockServiceConnector.getInstance().startFaceUnlock();
             }
         });
     }
