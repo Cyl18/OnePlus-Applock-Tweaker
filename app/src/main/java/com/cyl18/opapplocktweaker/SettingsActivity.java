@@ -192,7 +192,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             bindPreferenceSummaryToValue(findPreference("password_length"));
-            bindPreferenceSummaryToValue(findPreference("password"));
 
             addAppsToReplace();
             findPreference("enable_hide_icon").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
