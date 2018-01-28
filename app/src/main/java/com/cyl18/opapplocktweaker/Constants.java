@@ -12,4 +12,5 @@ public interface Constants {
     String TRACKER = "mCredentialCheckResultTracker";
     String THIS_PACKAGE = "com.cyl18.opapplocktweaker";
     String SHARED_SETTINGS_FILE = "OPApplockTweakerSettings";
+    String APPLOCK_CHOOSE_PASSWORD = "com.oneplus.applocker.ChooseLockSettingsHelper";
 }

@@ -26,6 +26,38 @@
 
     <SwitchPreference
         android:defaultValue="false"
+        android:key="enable_replace_password"
+        android:title="@string/replace_password"
+        android:summary="@string/replace_password_summary" />
+
+    <EditTextPreference
+        android:dependency="enable_replace_password"
+        android:maxLines="1"
+        android:inputType="textPassword"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/password"
+        android:summary="@string/enable_replace_password_summary"
+        android:key="password" />
+
+    <SwitchPreference
+        android:dependency="enable_replace_password"
+        android:defaultValue="false"
+        android:key="enable_only_replace_selected"
+        android:title="@string/only_replace_selected_apps" />
+
+    <PreferenceScreen
+        android:dependency="enable_only_replace_selected"
+        android:key="apps_to_replace"
+        android:title="@string/apps_to_replace" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="disable_fingerprint"
+        android:title="@string/disable_fingerprint" />
+
+    <SwitchPreference
+        android:defaultValue="false"
         android:key="enable_hide_icon"
         android:title="@string/hide_icon" />
 

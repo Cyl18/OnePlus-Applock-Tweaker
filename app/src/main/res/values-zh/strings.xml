@@ -13,5 +13,16 @@
     <string name="enable_fast_password">快速输入密码</string>
     <string name="password_length">密码长度</string>
     <string name="hide_icon">隐藏图标</string>
+    <string name="replace_password">替换应用锁密码</string>
+    <string name="replace_password_summary">使用下面的密码而不是系统密码</string>
+    <string name="password">密码</string>
+    <string name="apps_to_replace">要替换的应用</string>
+    <string name="only_replace_selected_apps">只替换选择的应用</string>
+    <string name="alert_title">警告</string>
+    <string name="alert_summary">不要把快速解锁和密码替换一起使用, 快速解锁在密码替换里是可用的</string>
+    <string name="alert_button">好的</string>
+    <string name="disable_fingerprint">关闭指纹解锁</string>
+    <string name="enable_replace_password_summary">需求系统重启, 请使用和系统相同的密码</string>
+
 
 </resources>

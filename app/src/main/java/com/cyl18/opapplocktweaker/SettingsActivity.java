@@ -2,22 +2,30 @@ package com.cyl18.opapplocktweaker;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import org.lukhnos.nnio.file.Files;
@@ -61,6 +69,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
+            } else if (preference instanceof CheckBoxPreference) {
+                // do nothing
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
@@ -94,10 +104,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        if (preference instanceof EditTextPreference) {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        }
+
+
     }
 
     @Override
@@ -180,18 +194,81 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             bindPreferenceSummaryToValue(findPreference("password_length"));
+            bindPreferenceSummaryToValue(findPreference("password"));
+
+            addAppsToReplace();
             findPreference("enable_hide_icon").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    PackageManager packageManager = getActivity().getPackageManager();
-                    int state = (!(Boolean) newValue) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-                    ComponentName aliasName = new ComponentName(getActivity(), "com.cyl18.opapplocktweaker.SettingsActivityAlias");
-                    packageManager.setComponentEnabledSetting(aliasName, state, PackageManager.DONT_KILL_APP);
-
-                    //TODO
+                    setHide((Boolean) newValue);
                     return true;
                 }
             });
+            findPreference("enable_replace_password").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if ((boolean) newValue) showAlert();
+                    return true;
+                }
+            });
+        }
+
+        private void addAppsToReplace() {
+            Activity activity = this.getActivity();
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+            PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("apps_to_replace");
+
+            for (ApplicationInfo applicationInfo : getAllPackages()) {
+                CheckBoxPreference checkBox = new CheckBoxPreference(this.getContext());
+                checkBox.setTitle(getApplicationName(applicationInfo, activity.getPackageManager()));
+                try {
+                    checkBox.setIcon(getActivity().getPackageManager().getApplicationIcon(applicationInfo.packageName));
+                } catch (PackageManager.NameNotFoundException e) {
+                    // ignored
+                }
+                checkBox.setSummary(applicationInfo.packageName);
+                checkBox.setKey(applicationInfo.packageName);
+                checkBox.setChecked(preferences.getBoolean(applicationInfo.packageName, false));
+
+                checkBox.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        preferences.edit().putBoolean(preference.getKey(), (boolean) newValue).apply();
+                        return true;
+                    }
+                });
+                preferenceScreen.addPreference(checkBox);
+            }
+        }
+
+        private void setHide(Boolean newValue) {
+            PackageManager packageManager = getActivity().getPackageManager();
+            int state = (!newValue) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+            ComponentName aliasName = new ComponentName(getActivity(), "com.cyl18.opapplocktweaker.SettingsActivityAlias");
+            packageManager.setComponentEnabledSetting(aliasName, state, PackageManager.DONT_KILL_APP);
+        }
+
+        private void showAlert() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.alert_title);
+            builder.setMessage(R.string.alert_summary);
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.alert_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // do nothing
+                }
+            });
+            builder.create().show();
+        }
+
+        private List<ApplicationInfo> getAllPackages() {
+            return this.getActivity().getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+        }
+
+        private String getApplicationName(ApplicationInfo applicationInfo, PackageManager pm) {
+            CharSequence applicationLabel = pm.getApplicationLabel(applicationInfo);
+            return applicationLabel == null ? "" : applicationLabel.toString(); //TODO
         }
 
         @Override

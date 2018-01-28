@@ -14,6 +14,7 @@ import java.io.File;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -39,6 +40,9 @@ public class AppLockHooker implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!lpparam.packageName.equals(Constants.APPLOCK_PACKAGE)) return;
+
+        SharedPreferences globalPref = getPreferences();
+        boolean enableReplacePassword = globalPref.getBoolean("enable_replace_password", true);
 
         // hook face recognition
         XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM, lpparam.classLoader, "onResume", new XC_MethodHook() {
@@ -102,6 +106,20 @@ public class AppLockHooker implements IXposedHookLoadPackage {
                     onPINInput(length, thisObject);
             }
         });
+
+        // hook custom password
+        if (enableReplacePassword) {
+            XposedHelpers.findAndHookMethod(Constants.APPLOCK_CHOOSE_PASSWORD, lpparam.classLoader, "launchConfirmationActivity",
+                    int.class, CharSequence.class, CharSequence.class, CharSequence.class, boolean.class, boolean.class, boolean.class, long.class, boolean.class, String.class, int.class, int.class, new XC_MethodReplacement() {
+                        @Override
+                        protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+
+                            return true;
+                        }
+
+                    });
+        }
+
 
     }
 
