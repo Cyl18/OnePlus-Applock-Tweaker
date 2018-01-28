@@ -13,15 +13,11 @@
     <string name="password_length">Password length</string>
     <string name="hide_icon">Hide icon</string>
     <string name="replace_password">Replace applock password</string>
-    <string name="replace_password_summary">Use password below instead of system password</string>
     <string name="password">Password</string>
     <string name="apps_to_replace">Apps to replace</string>
     <string name="only_replace_selected_apps">Only replaces selected apps</string>
-    <string name="alert_title">Warning</string>
-    <string name="alert_summary">DO NOT enable fast unlock and password replacement together, as fast lock is usable by default in password unlock</string>
-    <string name="alert_button">Okay</string>
     <string name="disable_fingerprint">Disable fingerprint</string>
-    <string name="enable_replace_password_summary">Require restart system, please use the same password type as the system\'s</string>
+    <string name="enable_replace_password_summary">Use password below instead of system password, please use the same password type as the system\'s</string>
 
 
 </resources>

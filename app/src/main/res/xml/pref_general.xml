@@ -28,7 +28,7 @@
         android:defaultValue="false"
         android:key="enable_replace_password"
         android:title="@string/replace_password"
-        android:summary="@string/replace_password_summary" />
+        android:summary="@string/enable_replace_password_summary" />
 
     <EditTextPreference
         android:dependency="enable_replace_password"
@@ -37,7 +37,6 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/password"
-        android:summary="@string/enable_replace_password_summary"
         android:key="password" />
 
     <SwitchPreference

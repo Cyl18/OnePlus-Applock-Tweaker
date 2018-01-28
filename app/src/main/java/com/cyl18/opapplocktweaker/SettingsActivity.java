@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -25,7 +24,6 @@ import android.preference.PreferenceScreen;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import org.lukhnos.nnio.file.Files;
@@ -204,13 +202,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
-            findPreference("enable_replace_password").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if ((boolean) newValue) showAlert();
-                    return true;
-                }
-            });
         }
 
         private void addAppsToReplace() {
@@ -246,20 +237,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int state = (!newValue) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
             ComponentName aliasName = new ComponentName(getActivity(), "com.cyl18.opapplocktweaker.SettingsActivityAlias");
             packageManager.setComponentEnabledSetting(aliasName, state, PackageManager.DONT_KILL_APP);
-        }
-
-        private void showAlert() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.alert_title);
-            builder.setMessage(R.string.alert_summary);
-            builder.setCancelable(true);
-            builder.setPositiveButton(R.string.alert_button, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // do nothing
-                }
-            });
-            builder.create().show();
         }
 
         private List<ApplicationInfo> getAllPackages() {
