@@ -202,7 +202,10 @@ public class AppLockHooker implements IXposedHookLoadPackage {
     }
 
     private boolean shouldReplace(SharedPreferences preferences, String packageName) {
-        return !preferences.getBoolean("enable_only_replace_selected", false) || preferences.getBoolean(packageName, false);
+        boolean replace_password = preferences.getBoolean("enable_replace_password", false);
+        boolean only_replace_selected = preferences.getBoolean("enable_only_replace_selected", false);
+        boolean selected = preferences.getBoolean(packageName, false);
+        return replace_password && !only_replace_selected || replace_password && selected;
     }
 
     private void hookFastPassword(SharedPreferences preferences) {
