@@ -22,13 +22,15 @@ public class FaceUnlockServiceConnector {
     private static FaceUnlockServiceConnector instance;
     private boolean started = false;
     private IBinder currentBinder;
+    private AppLockHooker hooker;
 
     public static FaceUnlockServiceConnector getInstance() {
         return instance;
     }
 
-    public FaceUnlockServiceConnector() {
+    public FaceUnlockServiceConnector(AppLockHooker hooker) {
         instance = this;
+        this.hooker = hooker;
     }
 
     public void startFaceUnlock(IBinder binder) {
@@ -64,13 +66,13 @@ public class FaceUnlockServiceConnector {
         }
 
         if (!force)
-            if (!AppLockHooker.getCurrentTracker().getResult() &&
+            if (!hooker.getCurrentTracker().getResult() &&
                     isScreenOn())
                 startFaceUnlock();
     }
 
     private boolean isScreenOn() {
-        DisplayManager dm = (DisplayManager) AppLockHooker.getCurrentApplockerActivity().getSystemService(Context.DISPLAY_SERVICE);
+        DisplayManager dm = (DisplayManager) hooker.getCurrentApplockerActivity().getSystemService(Context.DISPLAY_SERVICE);
         if (dm == null)
             return false;
         Display[] displays = dm.getDisplays();
@@ -92,7 +94,7 @@ public class FaceUnlockServiceConnector {
         @Override
         public void onCompared(int faceId, int userId, int result, int compareTimeMillis, int score) throws RemoteException {
             if (result != RESULT_SUCCESSFUL) return;
-            Object activity = AppLockHooker.getCurrentApplockerActivity();
+            Object activity = hooker.getCurrentApplockerActivity();
             try {
                 XposedHelpers.callMethod(activity, "onAuthenticated");
             } catch (Throwable e) {
