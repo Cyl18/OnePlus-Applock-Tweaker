@@ -1,3 +1,7 @@
 # OnePlus Applock Tweaker
-一加应用锁 Xposed 修改插件
-第一次写 Android, 如果你有想法, 可以提交 Pull Request!
+
+[![Build Status](https://travis-ci.org/Cyl18/OnePlus-5T-Applock-Tweaker.svg?branch=dev)](https://travis-ci.org/Cyl18/OnePlus-5T-Applock-Tweaker)
+
+An Xposed module which appends face unlock method to OnePlus Applocker.
+
+Licensed under WTFPL.

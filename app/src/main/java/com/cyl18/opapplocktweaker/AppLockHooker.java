@@ -26,17 +26,20 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class AppLockHooker implements IXposedHookLoadPackage {
-    private static final int ONEPLUS_APPLOCK_LAYOUT_ID = 2131558403;
-    private static ServiceConnection connection = new MyServiceConnection();
-    private static Activity currentApplockerActivity;
-    private static TrackerConnector currentTracker;
+    private ServiceConnection connection;
+    private Activity currentApplockerActivity;
+    private TrackerHandler currentTracker;
 
-    public static Activity getCurrentApplockerActivity() {
+    public Activity getCurrentApplockerActivity() {
         return currentApplockerActivity;
     }
 
-    public static TrackerConnector getCurrentTracker() {
+    public TrackerHandler getCurrentTracker() {
         return currentTracker;
+    }
+
+    public AppLockHooker() {
+        connection = new MyServiceConnection(this);
     }
 
     @Override
@@ -245,7 +248,7 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         Intent intent = new Intent();
         intent.setClassName(Constants.FACEUNLOCK_PACKAGE, Constants.FACEUNLOCK_SERVICE);
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        currentTracker = new TrackerConnector(XposedHelpers.getObjectField(currentApplockerActivity, Constants.TRACKER));
+        currentTracker = new TrackerHandler(XposedHelpers.getObjectField(currentApplockerActivity, Constants.TRACKER));
         getLayout().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -256,7 +259,7 @@ public class AppLockHooker implements IXposedHookLoadPackage {
     }
 
     private View getLayout() {
-        return currentApplockerActivity.findViewById(ONEPLUS_APPLOCK_LAYOUT_ID);
+        return currentApplockerActivity.findViewById(Constants.ONEPLUS_APPLOCK_LAYOUT_ID);
     }
 
     public String getUnlockPackageName() {

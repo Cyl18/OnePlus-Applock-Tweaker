@@ -2,6 +2,8 @@ package com.cyl18.opapplocktweaker;
 
 public interface Constants {
     int USER_ID = 0;
+    int ONEPLUS_APPLOCK_LAYOUT_ID = 2131558403;
+
     String APPLOCK_PACKAGE = "com.oneplus.applocker";
     String APPLOCK_ACTIVITY_CONFIRM = "com.oneplus.applocker.ApplockerConfirmActivity";
     String APPLOCK_ACTIVITY_CONFIRM_COMPLEX = "com.oneplus.applocker.ApplockerConfirmComplexPassword";
@@ -10,7 +12,7 @@ public interface Constants {
     String FACEUNLOCK_PACKAGE = "com.oneplus.faceunlock";
     String FACEUNLOCK_SERVICE = "com.oneplus.faceunlock.FaceUnlockService";
     String TRACKER = "mCredentialCheckResultTracker";
-    String THIS_PACKAGE = "com.cyl18.opapplocktweaker";
+    String APP_PACKAGE = "com.cyl18.opapplocktweaker";
     String SHARED_SETTINGS_FILE = "OPApplockTweakerSettings";
     String APPLOCK_CHOOSE_PASSWORD = "com.oneplus.applocker.ChooseLockSettingsHelper";
 }
