@@ -27,6 +27,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import org.lukhnos.nnio.file.Files;
+import org.lukhnos.nnio.file.Path;
 import org.lukhnos.nnio.file.Paths;
 
 import java.io.File;
@@ -67,8 +68,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-            } else if (preference instanceof CheckBoxPreference) {
-                // do nothing
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
@@ -103,10 +102,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Trigger the listener immediately with the preference's
         // current value.
         if (preference instanceof EditTextPreference) {
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getString(preference.getKey(), ""));
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+                    .getDefaultSharedPreferences(preference.getContext())
+                    .getString(preference.getKey(), "")
+            );
         }
 
 
@@ -121,15 +120,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
                 // No explanation needed, we can request the permission.
 
                 ActivityCompat.requestPermissions(this,
@@ -147,10 +139,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        // Show the Up button in the action bar.
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -250,16 +240,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onPause() {
             super.onPause();
-            // bad code here.
+            // bad code here. // good code appended. ---by Lasm_Gratel
 
-            File prefsDir = new File(getActivity().getApplicationInfo().dataDir, "shared_prefs");
-            File source = new File(prefsDir, getPreferenceManager().getSharedPreferencesName() + ".xml");
-            File dest = new File(Environment.getExternalStorageDirectory(), Constants.SHARED_SETTINGS_FILE);
+            Path prefsPath = Paths.get(getActivity().getApplicationInfo().dataDir, "shared_prefs");
+            Path sourcePath = prefsPath.resolve(getPreferenceManager().getSharedPreferencesName() + ".xml");
+            Path destPath = Paths.get(Environment.getExternalStorageDirectory().getAbsolutePath(), Constants.SHARED_SETTINGS_FILE);
 
-            if (source.exists()) {
-                if (dest.exists()) dest.delete();
+            if (Files.exists(prefsPath)) {
                 try {
-                    Files.copy(Paths.get(source.toURI()), Paths.get(dest.toURI()));
+                    Files.deleteIfExists(destPath);
+                    Files.copy(sourcePath, destPath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -275,13 +265,5 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
-
-
     }
-
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-
 }

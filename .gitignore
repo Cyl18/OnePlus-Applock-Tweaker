@@ -11,3 +11,4 @@
 app/debug/output.json
 app/release/output.json
 .idea/*
+!.travis.yml

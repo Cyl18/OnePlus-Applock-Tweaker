@@ -6,18 +6,18 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-    <string name="enable_face_recognition_summary">For fast unlock</string>
+    <string name="enable_face_recognition_summary">For fast unlock. (WARNING: HIGH SECURITY RISKS!)</string>
     <string name="enable_face_recognition">Enable face recognition</string>
-    <string name="enable_fast_password_summary">Quick unlock needs to know the exact length of your password</string>
+    <string name="enable_fast_password_summary">Quick unlock needs the exact length of your password to be active.</string>
     <string name="enable_fast_password">Enable quick unlock</string>
     <string name="password_length">Password length</string>
     <string name="hide_icon">Hide icon</string>
-    <string name="replace_password">Replace applock password</string>
+    <string name="replace_password">Applock password replacement</string>
     <string name="password">Password</string>
     <string name="apps_to_replace">Apps to replace</string>
     <string name="only_replace_selected_apps">Only replaces selected apps</string>
     <string name="disable_fingerprint">Disable fingerprint</string>
-    <string name="enable_replace_password_summary">Use password below instead of system password, please use the same password type as the system\'s</string>
+    <string name="enable_replace_password_summary">Use password below instead of system password, please use the same password type as system configured.</string>
 
 
 </resources>
