@@ -69,6 +69,17 @@ public class AppLockHooker implements IXposedHookLoadPackage {
             }
         });
 
+        XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM, lpparam.classLoader, "onPause", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                SharedPreferences preferences = getPreferences();
+                boolean enable_face_recognition = preferences.getBoolean("enable_face_recognition", true);
+
+                if (enable_face_recognition)
+                    hookFaceUnlockStop(true);
+            }
+        });
+
         // hook complex password
         XposedHelpers.findAndHookMethod(Constants.APPLOCK_ACTIVITY_CONFIRM_COMPLEX, lpparam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
