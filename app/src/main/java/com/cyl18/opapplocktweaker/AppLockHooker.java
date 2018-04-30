@@ -251,8 +251,12 @@ public class AppLockHooker implements IXposedHookLoadPackage {
     }
 
     private void hookFaceUnlockStop(boolean force) {
-        FaceUnlockServiceConnector.getInstance().stopFaceUnlock(force);
-        currentApplockerActivity.unbindService(connection);
+        try {
+            FaceUnlockServiceConnector.getInstance().stopFaceUnlock(force);
+            currentApplockerActivity.unbindService(connection);
+        } catch (Exception e) {
+
+        }
     }
 
     private void hookFaceUnlockStart() {
@@ -260,18 +264,15 @@ public class AppLockHooker implements IXposedHookLoadPackage {
         intent.setClassName(Constants.FACEUNLOCK_PACKAGE, Constants.FACEUNLOCK_SERVICE);
         currentApplockerActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         currentTracker = new TrackerHandler(XposedHelpers.getObjectField(currentApplockerActivity, Constants.TRACKER));
-        getLayout().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FaceUnlockServiceConnector.getInstance().stopFaceUnlock(false);
-                FaceUnlockServiceConnector.getInstance().startFaceUnlock();
-            }
-        });
+        //getLayout().setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View view) {
+        //        FaceUnlockServiceConnector.getInstance().stopFaceUnlock(false);
+        //        FaceUnlockServiceConnector.getInstance().startFaceUnlock();
+        //    }
+        //});
     }
 
-    private View getLayout() {
-        return currentApplockerActivity.findViewById(Constants.ONEPLUS_APPLOCK_LAYOUT_ID);
-    }
 
     public String getUnlockPackageName() {
         return ((String) XposedHelpers.getObjectField(currentApplockerActivity, "mPackageName"));
